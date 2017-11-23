@@ -7,7 +7,7 @@ import (
 )
 
 type configJSONConnector struct {
-	data ConfigData
+	data *ConfigData
 }
 
 func (c *configJSONConnector) GetConfig() *ConfigData {
@@ -60,7 +60,7 @@ func (c *configJSONConnector) getConfig() (*ConfigData, error) {
 	}
 
 	if conf.WWWPort == "" {
-		conf.HTTPPort = "80"
+		conf.WWWPort = "80"
 	}
 
 	if conf.WWWFolder == "" {
