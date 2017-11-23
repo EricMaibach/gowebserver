@@ -1,0 +1,6 @@
+.DS_Store
+*.exe
+*.dll
+*.test
+uiservice.config.json
+uiservice.log
