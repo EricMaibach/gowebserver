@@ -12,6 +12,7 @@ var wwwport = flag.String("wwwport", "80", "The port to use when serving the web
 var slogger service.Logger
 
 type program struct {
+	configjconn *configJSONConnector
 }
 
 func (p *program) Start(s service.Service) error {
@@ -25,8 +26,21 @@ func (p *program) Stop(s service.Service) error {
 }
 
 func (p *program) run() {
-	addr := ":" + *wwwport
-	http.Handle("/", http.FileServer(http.Dir(*wwwfolder)))
+	p.configjconn = NewConfigJSONConnector()
+	currconfig := p.configjconn.GetConfig()
+
+	if *wwwport != "" {
+		currconfig.WWWPort = *wwwport
+	}
+
+	if *wwwfolder != "" {
+		currconfig.WWWFolder = *wwwfolder
+	}
+
+	p.configjconn.SetConfig(*currconfig)
+
+	addr := ":" + p.configjconn.GetConfig().WWWPort
+	http.Handle("/", http.FileServer(http.Dir(p.configjconn.GetConfig().WWWFolder)))
 	if err := http.ListenAndServe(addr, nil); err != nil {
 		log.Print("Error starting http.  Error: ", err)
 	}
